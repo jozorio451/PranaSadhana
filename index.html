@@ -1,0 +1,836 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Prana Sadhana - Hatha Yoga</title>
+
+    <!-- METATAGS PARA TRANSFORMAR EM APP ANDROID (PWA) -->
+    <meta name="theme-color" content="#526a37">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="application-name" content="Prana Sadhana">
+    
+    <!-- CSS Base Imediato -->
+    <style>
+        :root {
+            --bg-main: #f5f7f2;
+            --text-main: #1e293b;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            background-color: var(--bg-main) !important;
+            color: var(--text-main) !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overscroll-behavior-y: none;
+        }
+        .dark {
+            --bg-main: #0f172a;
+            --text-main: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(210, 220, 195, 0.6);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.94);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+        }
+    </style>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        yoga: {
+                            50: '#f5f7f2',
+                            100: '#e5ebd9',
+                            200: '#ccd7b7',
+                            300: '#aabf8e',
+                            400: '#86a266',
+                            500: '#678446',
+                            600: '#526a37',
+                            700: '#43542f',
+                            800: '#384529',
+                            900: '#2f3a24',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full bg-[#f5f7f2] dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-200">
+
+    <!-- CABEÇALHO -->
+    <header class="sticky top-0 z-40 glass-card border-b border-yoga-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-yoga-600 to-yoga-400 flex items-center justify-center text-white shadow-md flex-shrink-0">
+                    <i class="fa-solid fa-wind text-base"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-base sm:text-lg font-bold tracking-tight text-yoga-900 dark:text-yoga-100 leading-tight">Prana Sadhana</h1>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">16 Pranayamas do Hatha Yoga</p>
+                </div>
+            </div>
+            
+            <nav class="flex items-center space-x-1 sm:space-x-2">
+                <button onclick="switchTab('library')" id="nav-library" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-yoga-600 text-white shadow-sm flex items-center space-x-1.5">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span class="hidden xs:inline sm:inline">Pranayamas</span>
+                </button>
+                <button onclick="switchTab('timer')" id="nav-timer" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-yoga-100 dark:hover:bg-slate-800 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-stopwatch"></i>
+                    <span class="hidden xs:inline sm:inline">Timer</span>
+                </button>
+                <button onclick="switchTab('stats')" id="nav-stats" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-yoga-100 dark:hover:bg-slate-800 flex items-center space-x-1.5">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span class="hidden xs:inline sm:inline">Evolução</span>
+                </button>
+                <button onclick="toggleDarkMode()" aria-label="Alternar tema escuro" class="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-yoga-100 dark:hover:bg-slate-800 transition-all">
+                    <i class="fa-solid fa-moon dark:hidden text-sm"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-amber-400 text-sm"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 overflow-y-auto">
+
+        <!-- ABA 1: BIBLIOTECA -->
+        <section id="view-library" class="space-y-6">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-yoga-700 via-yoga-600 to-yoga-800 text-white p-6 sm:p-8 shadow-xl">
+                <div class="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 flex items-center justify-center pointer-events-none">
+                    <i class="fa-solid fa-om text-9xl"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-[11px] font-semibold tracking-wider uppercase backdrop-blur-md mb-2">Sabedoria Milenar</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold mb-2">A Arte da Respiração Consciente</h2>
+                    <p class="text-yoga-100 text-xs sm:text-sm leading-relaxed mb-4">
+                        Explore os 16 pranayamas clássicos do Hatha Yoga divididos entre técnicas Solares (aquecedoras), Lunares (refrescantes) e de Meditação.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-2 pt-1" id="filterContainer">
+                        <button onclick="filterCategory('all')" class="cat-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white text-yoga-800 shadow-sm transition-all" data-cat="all">Todos (16)</button>
+                        <button onclick="filterCategory('solar')" class="cat-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-white/30 transition-all" data-cat="solar"><i class="fa-solid fa-sun mr-1.5 text-amber-300"></i>Solares (5)</button>
+                        <button onclick="filterCategory('meditacao')" class="cat-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-white/30 transition-all" data-cat="meditacao"><i class="fa-solid fa-spa mr-1.5 text-purple-300"></i>Meditação (5)</button>
+                        <button onclick="filterCategory('lunar')" class="cat-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-white/30 transition-all" data-cat="lunar"><i class="fa-solid fa-moon mr-1.5 text-blue-300"></i>Lunares (6)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+                <div class="relative w-full sm:w-80">
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="filterPranayamas()" placeholder="Pesquisar técnica ou benefício..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-yoga-500 text-sm transition-all">
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-400" id="resultCount">Exibindo 16 pranayamas</div>
+            </div>
+
+            <div id="pranayamaGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        </section>
+
+        <!-- ABA 2: TIMER COM METRÔNOMO -->
+        <section id="view-timer" class="space-y-6 max-w-2xl mx-auto" style="display: none;">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <button onclick="switchTab('library')" class="text-xs px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-yoga-100 dark:hover:bg-slate-700 transition-all font-medium flex items-center space-x-1.5">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Escolher outro Pranayama</span>
+                    </button>
+                    <span id="activeCategoryBadge" class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">Solar</span>
+                </div>
+
+                <div class="mb-8">
+                    <h2 id="activeTitle" class="font-serif text-3xl sm:text-4xl font-bold text-yoga-900 dark:text-white mb-1">Ujjayi</h2>
+                    <p id="activeSanskrit" class="text-sm text-yoga-600 dark:text-yoga-400 font-medium italic mb-2">उज्जयि प्राणायाम</p>
+                    <p id="activeDescription" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto">A respiração vitoriosa, gerando calor interno e foco com som suave na glote.</p>
+                </div>
+
+                <!-- CÍRCULO DO METRÔNOMO LIMPO -->
+                <div class="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto mb-8 flex items-center justify-center">
+                    <div id="metronomeRing" class="absolute inset-0 rounded-full border-4 border-yoga-300/40 dark:border-yoga-700/40 flex items-center justify-center transition-all duration-300"></div>
+                    
+                    <div class="w-48 h-48 sm:w-56 sm:h-56 rounded-full bg-gradient-to-tr from-yoga-600 to-yoga-500 shadow-2xl flex flex-col items-center justify-center text-white relative z-10 transition-transform duration-200" id="coreCircle">
+                        <span id="timerClock" class="font-serif text-4xl sm:text-5xl font-bold mb-2 tracking-tight">00:00</span>
+                        
+                        <div id="metronomeBeatIndicator" class="text-xs text-yoga-100 flex items-center space-x-2 bg-black/20 px-3 py-1 rounded-full">
+                            <i class="fa-solid fa-circle text-[7px] text-yoga-200" id="beatDot"></i>
+                            <span id="metronomeCountText" class="font-mono">0 s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONFIGURAÇÕES DO TIMER -->
+                <div id="timerControlsConfig" class="bg-yoga-50/90 dark:bg-slate-800/90 rounded-2xl p-4 mb-6 max-w-md mx-auto grid grid-cols-2 gap-3 text-left">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Duração Alvo</label>
+                        <select id="targetDurationSelect" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-yoga-500 text-slate-800 dark:text-slate-100">
+                            <option value="1">1 Minuto</option>
+                            <option value="3">3 Minutos</option>
+                            <option value="5" selected>5 Minutos</option>
+                            <option value="10">10 Minutos</option>
+                            <option value="15">15 Minutos</option>
+                            <option value="20">20 Minutos</option>
+                            <option value="30">30 Minutos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Metrônomo (1 clique/s)</label>
+                        <button onclick="toggleSound()" id="soundToggleBtn" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm flex items-center justify-center space-x-2 text-slate-700 dark:text-slate-200 hover:bg-yoga-100 dark:hover:bg-slate-800 transition-all">
+                            <i class="fa-solid fa-volume-high text-yoga-600" id="soundIcon"></i>
+                            <span id="soundStatusText">Ativado</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BOTÕES DE CONTROLE -->
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="startTimer()" id="startBtn" class="px-8 py-3.5 rounded-2xl bg-yoga-600 hover:bg-yoga-700 text-white font-semibold text-sm shadow-lg shadow-yoga-600/30 flex items-center space-x-2 transition-all transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Iniciar Prática</span>
+                    </button>
+                    <button onclick="pauseTimer()" id="pauseBtn" class="hidden px-7 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm shadow-lg shadow-amber-500/30 flex items-center space-x-2 transition-all">
+                        <i class="fa-solid fa-pause"></i>
+                        <span>Pausar</span>
+                    </button>
+                    <button onclick="stopTimer(false)" id="stopBtn" class="hidden px-7 py-3.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-sm shadow-lg shadow-rose-500/30 flex items-center space-x-2 transition-all">
+                        <i class="fa-solid fa-stop"></i>
+                        <span>Finalizar & Salvar</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 3: EVOLUÇÃO E ESTATÍSTICAS COM BACKUP -->
+        <section id="view-stats" class="space-y-6" style="display: none;">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="font-serif text-2xl font-bold text-yoga-900 dark:text-white">Evolução do Sadhana</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Tempo total registrado e somado de respiração consciente.</p>
+                    </div>
+                    <div class="flex bg-yoga-100 dark:bg-slate-800 p-1 rounded-2xl space-x-1">
+                        <button onclick="changeStatsPeriod('week')" id="period-week" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-white dark:bg-slate-700 text-yoga-800 dark:text-white shadow-sm">Semana</button>
+                        <button onclick="changeStatsPeriod('month')" id="period-month" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all text-slate-600 dark:text-slate-400">Mês</button>
+                        <button onclick="changeStatsPeriod('year')" id="period-year" class="px-4 py-2 rounded-xl text-xs font-semibold transition-all text-slate-600 dark:text-slate-400">Ano</button>
+                    </div>
+                </div>
+
+                <!-- CARDS -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-yoga-50 dark:bg-slate-800/60 p-5 rounded-2xl border border-yoga-100 dark:border-slate-700">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Tempo Total Respirado</span>
+                            <i class="fa-solid fa-clock text-yoga-600"></i>
+                        </div>
+                        <div class="font-serif text-2xl sm:text-3xl font-bold text-yoga-900 dark:text-white" id="statTotalTime">0 min</div>
+                        <span class="text-[11px] text-emerald-600 font-medium"><i class="fa-solid fa-check mr-1"></i>Salvo no seu dispositivo</span>
+                    </div>
+                    <div class="bg-yoga-50 dark:bg-slate-800/60 p-5 rounded-2xl border border-yoga-100 dark:border-slate-700">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Sessões Realizadas</span>
+                            <i class="fa-solid fa-fire text-amber-500"></i>
+                        </div>
+                        <div class="font-serif text-2xl sm:text-3xl font-bold text-yoga-900 dark:text-white" id="statSessionsCount">0</div>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">Práticas concluídas</span>
+                    </div>
+                    <div class="bg-yoga-50 dark:bg-slate-800/60 p-5 rounded-2xl border border-yoga-100 dark:border-slate-700">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Pranayama Mais Praticado</span>
+                            <i class="fa-solid fa-heart text-rose-500"></i>
+                        </div>
+                        <div class="font-serif text-lg font-bold text-yoga-900 dark:text-white truncate" id="statFavorite">Nenhum ainda</div>
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">Preferência de prática</span>
+                    </div>
+                </div>
+
+                <!-- GRÁFICO -->
+                <div class="bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700 relative h-72 sm:h-80 mb-6">
+                    <canvas id="evolutionChart"></canvas>
+                </div>
+
+                <!-- GERENCIAMENTO DE DADOS E BACKUP -->
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <span class="text-slate-500 dark:text-slate-400 flex items-center">
+                        <i class="fa-solid fa-shield-halved mr-1.5 text-yoga-600"></i>Seus registros ficam guardados no seu aparelho.
+                    </span>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportDataBackup()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-yoga-100 text-slate-700 dark:text-slate-200 font-medium transition-all flex items-center space-x-1">
+                            <i class="fa-solid fa-download text-yoga-600"></i>
+                            <span>Exportar Backup</span>
+                        </button>
+                        <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-yoga-100 text-slate-700 dark:text-slate-200 font-medium transition-all flex items-center space-x-1">
+                            <i class="fa-solid fa-upload text-yoga-600"></i>
+                            <span>Restaurar</span>
+                            <input type="file" id="importFileInput" onchange="importDataBackup(event)" class="hidden" accept=".json">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE DETALHES -->
+    <div id="detailModal" style="display: none;" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" aria-label="Fechar" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-white transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" style="display: none;" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-3 text-sm">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage">Prática salva com sucesso!</span>
+    </div>
+
+    <script>
+        const pranayamasData = [
+            { id: 1, name: "Surya Bhedana", sanskrit: "सूर्य भेदन प्राणायाम", category: "solar", categoryName: "Solar (Aquecedor)", desc: "Inalação pela narina direita (solar) e exalação pela esquerda (lunar).", benefits: "Aumenta o calor corporal, estimula o sistema nervoso simpático e ativa o fogo digestivo.", technique: "Feche a narina esquerda com o dedo anelar. Inale pela direita. Feche a direita e exale suavemente pela esquerda." },
+            { id: 2, name: "Ujjayi", sanskrit: "उज्जयि प्राणायाम", category: "solar", categoryName: "Solar (Aquecedor / Foco)", desc: "A respiração vitoriosa, gerando calor interno com leve constrição na garganta.", benefits: "Gera calor interno sustentado (Agni), acalma o turbilhão mental e eleva a oxigenação.", technique: "Inale e exale pelas narinas mantendo uma suave contração da glote, emitindo um som suave como as ondas do mar." },
+            { id: 3, name: "Bhastrika", sanskrit: "भस्त्रिका प्राणायाम", category: "solar", categoryName: "Solar (Aquecedor)", desc: "Respiração do fole com inalações e exalações vigorosas com o abdômen.", benefits: "Purifica as nadis, queima toxinas e expande a vitalidade instantaneamente.", technique: "Inale expandindo o abdômen e exale contraindo vigorosamente em ritmo constante e cadenciado." },
+            { id: 4, name: "Sheetali", sanskrit: "शीतली प्राणायाम", category: "lunar", categoryName: "Lunar (Resfriador)", desc: "Respiração refrescante feita com a língua enrolada em tubo para fora dos lábios.", benefits: "Resfria a temperatura corporal, alivia a acidez gástrica, sede e ansiedade.", technique: "Projete a língua enrolada em tubo. Inale o ar fresco pela língua. Feche a boca e exale pelas duas narinas." },
+            { id: 5, name: "Sheetkari", sanskrit: "शीत्कारि प्राणायाम", category: "lunar", categoryName: "Lunar (Resfriador)", desc: "Respiração sibilante com os dentes suavemente encostados.", benefits: "Excelente ação refrescante e calmante para quem não dobra a língua.", technique: "Una os dentes com os lábios entreabertos. Inale fazendo o som suave de 'si-si' e expire pelo nariz." },
+            { id: 6, name: "Plavani", sanskrit: "प्लाविनी प्राणायाम", category: "meditacao", categoryName: "Meditação (Equilíbrio)", desc: "A respiração que gera leveza interna flutuante.", benefits: "Concede sensação de leveza interior e estabilidade mental prolongada.", technique: "Ingira pequenas porções de ar como se bebesse água, retendo com tranquilidade antes de liberar suavemente." },
+            { id: 7, name: "Moorchha", sanskrit: "मूर्च्छा प्राणायाम", category: "meditacao", categoryName: "Meditação (Interiorização)", desc: "Respiração do desvanecimento mental com retenção e trava de queixo.", benefits: "Conduz os sentidos para dentro (Pratyahara) e silencia as flutuações mentais.", technique: "Inale lentamente, aplique Jalandhara Bandha (queixo no peito) e fixe o foco no entrecenho." },
+            { id: 8, name: "Kevala Kumbhaka", sanskrit: "केवल कुम्भक", category: "meditacao", categoryName: "Meditação (Ápice)", desc: "A retenção espontânea da respiração, sem esforço mecânico.", benefits: "O ápice do Hatha Yoga. Pausa as ondas mentais (vrittis) na quietude pura.", technique: "Surge naturalmente através da imersão meditativa, quando a respiração cessa por si mesma." },
+            { id: 9, name: "Nadi Shodhana", sanskrit: "नाडी शोधन प्राणायाम", category: "meditacao", categoryName: "Meditação (Purificação)", desc: "Respiração pelas narinas alternadas para equilíbrio dos canais sutis.", benefits: "Harmoniza os hemisférios cerebrais, equilibra ida e pingala e pacifica a mente.", technique: "Feche a direita, inale pela esquerda; feche a esquerda, exale pela direita. Depois inale pela direita e exale pela esquerda." },
+            { id: 10, name: "Bhramari", sanskrit: "भ्रामरी प्राणायाम", category: "lunar", categoryName: "Lunar (Calmante)", desc: "Respiração da abelha emitindo zumbido ressonante na exalação.", benefits: "Acalma ondas cerebrais por ressonância acústica, combate insônia e estresse.", technique: "Tape suavemente os ouvidos com os polegares. Inale e ao exalar emita um zumbido uniforme ('Mmm')." },
+            { id: 11, name: "Anuloma Viloma", sanskrit: "अनुलोम विलोम प्राणायाम", category: "meditacao", categoryName: "Meditação (Foco)", desc: "Controle da respiração alternada com ritmo e retenção consciente.", benefits: "Aumenta a capacidade pulmonar, melhora o foco e purifica o sistema sutil.", technique: "Execute a alternância das narinas observando contagens exatas na inalação, retenção e exalação." },
+            { id: 12, name: "Chandra Bhedana", sanskrit: "चन्द्र भेदन प्राणायाम", category: "lunar", categoryName: "Lunar (Calmante)", desc: "Inalação sempre pela narina esquerda (lunar) e exalação pela direita (solar).", benefits: "Estimula o sistema parassimpático, resfria o organismo e prepara para o sono reparador.", technique: "Oclua a narina direita. Inale lentamente pela esquerda. Feche a esquerda e exale pela direita." },
+            { id: 13, name: "Kapalabhati", sanskrit: "कपालभाति प्राणायाम", category: "solar", categoryName: "Solar (Purificação)", desc: "O crânio brilhante. Exalações ativas e inalações passivas.", benefits: "Limpa vias respiratórias, clareia os pensamentos e ativa o fogo gástrico.", technique: "Concentre o esforço apenas na exalação curta e enérgica do umbigo, permitindo que a inalação ocorra sozinha." },
+            { id: 14, name: "Viloma Pranayama", sanskrit: "विलोम प्राणायाम", category: "lunar", categoryName: "Lunar (Controle)", desc: "Respiração interrompida com pausas graduais na inspiração ou expiração.", benefits: "Ensina precisão respiratória, expande a capacidade vital e alivia ansiedade.", technique: "Inale por 2s, pause 2s; inale mais 2s e repita até encher os pulmões, exalando de forma suave e contínua." },
+            { id: 15, name: "Suryabheda Avançado", sanskrit: "सूर्यभेद कुम्भक", category: "solar", categoryName: "Solar (Energizante)", desc: "Inalação solar com retenção sustentada e aplicação de bandhas.", benefits: "Acelera o calor interno, fortalece a digestão e direciona o prana para cima.", technique: "Inalação pela narina direita, retenção com queixo travado (Jalandhara Bandha) e exalação lenta pela esquerda." },
+            { id: 16, name: "Kevala Sahita", sanskrit: "सहित केवल प्राणायाम", category: "lunar", categoryName: "Lunar (Calmante)", desc: "Respiração suave e imperceptível que prepara para a quietude.", benefits: "Elimina a tensão somática e reduz o ritmo metabólico para a meditação.", technique: "Respire com delicadeza máxima, tornando a respiração inaudível e sem qualquer solavanco no peito." }
+        ];
+
+        /* ESTADO E PERSISTÊNCIA ROBUSTA */
+        const STORAGE_KEY = 'prana_sadhana_history_v1';
+        let currentFilter = 'all';
+        let activePranayama = pranayamasData[1]; // Ujjayi (Solar)
+        let timerInterval = null;
+        let secondsElapsed = 0;
+        let targetDurationSeconds = 300;
+        let isRunning = false;
+        let soundEnabled = true;
+        let metronomeBeat = 0;
+        let audioCtx = null;
+        let evolutionChartInstance = null;
+        let currentPeriod = 'week';
+
+        function getStoredSessions() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.warn("Armazenamento local restrito neste ambiente:", e);
+                return window._fallbackSessions || [];
+            }
+        }
+
+        function saveSession(durationSec, pranayamaName) {
+            const record = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                durationSeconds: durationSec,
+                pranayamaName: pranayamaName
+            };
+            try {
+                const list = getStoredSessions();
+                list.push(record);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+                window._fallbackSessions = list;
+            } catch (e) {
+                window._fallbackSessions = window._fallbackSessions || [];
+                window._fallbackSessions.push(record);
+            }
+            const mins = Math.max(1, Math.round(durationSec / 60));
+            showToast(`Prática de ${mins} min gravada com sucesso!`);
+        }
+
+        function playTickSound() {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtxClass) audioCtx = new AudioCtxClass();
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                if (!audioCtx) return;
+
+                // Frequência constante e suave de 400Hz (sem variação a cada 4s)
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.07);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.07);
+            } catch (e) {}
+        }
+
+        function renderLibrary(filteredList = pranayamasData) {
+            const grid = document.getElementById('pranayamaGrid');
+            if (!grid) return;
+            
+            const countElem = document.getElementById('resultCount');
+            if (countElem) {
+                countElem.innerText = `Exibindo ${filteredList.length} pranayamas`;
+            }
+            
+            grid.innerHTML = filteredList.map(p => {
+                let badgeColor = 'bg-purple-50 text-purple-700 dark:bg-slate-800 dark:text-purple-300 border-purple-200';
+                let iconClass = 'fa-spa text-purple-600';
+                
+                if (p.category === 'solar') {
+                    badgeColor = 'bg-amber-50 text-amber-700 dark:bg-slate-800 dark:text-amber-300 border-amber-200';
+                    iconClass = 'fa-sun text-amber-500';
+                } else if (p.category === 'lunar') {
+                    badgeColor = 'bg-blue-50 text-blue-700 dark:bg-slate-800 dark:text-blue-300 border-blue-200';
+                    iconClass = 'fa-moon text-blue-500';
+                }
+
+                return `
+                    <div class="glass-card rounded-3xl p-5 sm:p-6 shadow-md hover:shadow-xl transition-all flex flex-col justify-between border border-yoga-100 dark:border-slate-800 group">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${badgeColor} flex items-center space-x-1.5">
+                                    <i class="fa-solid ${iconClass}"></i>
+                                    <span>${p.categoryName.split(' ')[0]}</span>
+                                </span>
+                                <button onclick="openDetailModal(${p.id})" class="text-slate-400 hover:text-yoga-600 transition-colors p-1">
+                                    <i class="fa-solid fa-circle-info text-base"></i>
+                                </button>
+                            </div>
+                            <h3 class="font-serif text-lg sm:text-xl font-bold text-yoga-900 dark:text-white mb-1 group-hover:text-yoga-600 transition-colors">${p.name}</h3>
+                            <p class="text-xs text-yoga-600 dark:text-yoga-400 font-medium italic mb-2.5">${p.sanskrit}</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">${p.desc}</p>
+                        </div>
+                        <div class="pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                            <button onclick="openDetailModal(${p.id})" class="text-xs font-semibold text-slate-500 hover:text-yoga-600 transition-colors">
+                                Ver Técnica
+                            </button>
+                            <button onclick="selectPranayama(${p.id}); switchTab('timer');" class="px-3.5 py-2 rounded-xl bg-yoga-600 hover:bg-yoga-700 text-white text-xs font-semibold shadow-md shadow-yoga-600/20 flex items-center space-x-1.5 transition-all">
+                                <i class="fa-solid fa-stopwatch"></i>
+                                <span>Praticar</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterCategory(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-cat') === cat) {
+                    btn.className = "cat-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white text-yoga-800 shadow-sm transition-all";
+                } else {
+                    btn.className = "cat-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-white/30 transition-all";
+                }
+            });
+            filterPranayamas();
+        }
+
+        function filterPranayamas() {
+            const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+            const filtered = pranayamasData.filter(p => {
+                const matchesCat = currentFilter === 'all' || p.category === currentFilter;
+                const matchesQuery = p.name.toLowerCase().includes(query) || 
+                                     p.sanskrit.toLowerCase().includes(query) || 
+                                     p.desc.toLowerCase().includes(query) ||
+                                     p.benefits.toLowerCase().includes(query);
+                return matchesCat && matchesQuery;
+            });
+            renderLibrary(filtered);
+        }
+
+        function openDetailModal(id) {
+            const p = pranayamasData.find(item => item.id === id);
+            if (!p) return;
+
+            let badgeColor = 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300';
+            if (p.category === 'solar') badgeColor = 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300';
+            if (p.category === 'lunar') badgeColor = 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300';
+
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <div class="flex items-center space-x-2 mb-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${badgeColor}">${p.categoryName}</span>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-yoga-900 dark:text-white mb-1">${p.name}</h3>
+                <p class="text-sm text-yoga-600 dark:text-yoga-400 font-medium italic mb-4">${p.sanskrit}</p>
+                
+                <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                    <div>
+                        <h4 class="font-semibold text-yoga-800 dark:text-yoga-200 mb-1 flex items-center">
+                            <i class="fa-solid fa-align-left mr-2 text-yoga-600"></i>Descrição Clássica
+                        </h4>
+                        <p class="leading-relaxed">${p.desc}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-yoga-800 dark:text-yoga-200 mb-1 flex items-center">
+                            <i class="fa-solid fa-seedling mr-2 text-yoga-600"></i>Benefícios Terapêuticos
+                        </h4>
+                        <p class="leading-relaxed">${p.benefits}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-yoga-800 dark:text-yoga-200 mb-1 flex items-center">
+                            <i class="fa-solid fa-shoe-prints mr-2 text-yoga-600"></i>Modo de Execução
+                        </h4>
+                        <p class="bg-yoga-50 dark:bg-slate-900/80 p-3.5 rounded-2xl border border-yoga-100 dark:border-slate-700 leading-relaxed">${p.technique}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                    <button onclick="closeModal(); selectPranayama(${p.id}); switchTab('timer');" class="px-5 py-2.5 rounded-xl bg-yoga-600 hover:bg-yoga-700 text-white font-semibold text-xs sm:text-sm shadow-md flex items-center space-x-2">
+                        <i class="fa-solid fa-stopwatch"></i>
+                        <span>Iniciar Prática</span>
+                    </button>
+                </div>
+            `;
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        function selectPranayama(id) {
+            const p = pranayamasData.find(item => item.id === id);
+            if (!p) return;
+            activePranayama = p;
+            
+            document.getElementById('activeTitle').innerText = p.name;
+            document.getElementById('activeSanskrit').innerText = p.sanskrit;
+            document.getElementById('activeDescription').innerText = p.desc;
+            document.getElementById('activeCategoryBadge').innerText = p.categoryName.split(' ')[0];
+        }
+
+        function switchTab(tabName) {
+            document.getElementById('view-library').style.display = 'none';
+            document.getElementById('view-timer').style.display = 'none';
+            document.getElementById('view-stats').style.display = 'none';
+
+            const normalBtn = "px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-yoga-100 dark:hover:bg-slate-800 flex items-center space-x-1.5";
+            const activeBtn = "px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all bg-yoga-600 text-white shadow-sm flex items-center space-x-1.5";
+
+            document.getElementById('nav-library').className = normalBtn;
+            document.getElementById('nav-timer').className = normalBtn;
+            document.getElementById('nav-stats').className = normalBtn;
+
+            if (tabName === 'library') {
+                document.getElementById('view-library').style.display = 'block';
+                document.getElementById('nav-library').className = activeBtn;
+            } else if (tabName === 'timer') {
+                document.getElementById('view-timer').style.display = 'block';
+                document.getElementById('nav-timer').className = activeBtn;
+            } else if (tabName === 'stats') {
+                document.getElementById('view-stats').style.display = 'block';
+                document.getElementById('nav-stats').className = activeBtn;
+                renderStats(currentPeriod);
+            }
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            playTickSound();
+            const targetMin = parseInt(document.getElementById('targetDurationSelect').value) || 5;
+            targetDurationSeconds = targetMin * 60;
+
+            document.getElementById('startBtn').classList.add('hidden');
+            document.getElementById('pauseBtn').classList.remove('hidden');
+            document.getElementById('stopBtn').classList.remove('hidden');
+            document.getElementById('timerControlsConfig').classList.add('opacity-50', 'pointer-events-none');
+
+            const ring = document.getElementById('metronomeRing');
+            const dot = document.getElementById('beatDot');
+
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                metronomeBeat++;
+                
+                playTickSound();
+
+                ring.classList.add('scale-105', 'border-yoga-400');
+                dot.classList.add('text-white', 'scale-125');
+                setTimeout(() => {
+                    ring.classList.remove('scale-105', 'border-yoga-400');
+                    dot.classList.remove('text-white', 'scale-125');
+                }, 160);
+
+                updateTimerDisplay();
+
+                if (secondsElapsed >= targetDurationSeconds) {
+                    stopTimer(true);
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            if (!isRunning) return;
+            clearInterval(timerInterval);
+            isRunning = false;
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('startBtn').innerHTML = '<i class="fa-solid fa-play"></i><span>Continuar</span>';
+            document.getElementById('pauseBtn').classList.add('hidden');
+        }
+
+        function stopTimer(completed = false) {
+            clearInterval(timerInterval);
+            isRunning = false;
+
+            if (secondsElapsed >= 5) {
+                saveSession(secondsElapsed, activePranayama.name);
+            }
+
+            secondsElapsed = 0;
+            metronomeBeat = 0;
+            updateTimerDisplay();
+
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('startBtn').innerHTML = '<i class="fa-solid fa-play"></i><span>Iniciar Prática</span>';
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('stopBtn').classList.add('hidden');
+            document.getElementById('timerControlsConfig').classList.remove('opacity-50', 'pointer-events-none');
+
+            if (completed) {
+                showToast("Sessão concluída com serenidade!");
+            }
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(secondsElapsed / 60);
+            const secs = secondsElapsed % 60;
+            document.getElementById('timerClock').innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            document.getElementById('metronomeCountText').innerText = `${metronomeBeat} s`;
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundStatusText');
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                btn.innerText = "Ativado";
+                icon.className = "fa-solid fa-volume-high text-yoga-600";
+            } else {
+                btn.innerText = "Desativado";
+                icon.className = "fa-solid fa-volume-xmark text-slate-400";
+            }
+        }
+
+        function changeStatsPeriod(period) {
+            currentPeriod = period;
+            document.getElementById('period-week').className = "px-4 py-2 rounded-xl text-xs font-semibold transition-all text-slate-600 dark:text-slate-400";
+            document.getElementById('period-month').className = "px-4 py-2 rounded-xl text-xs font-semibold transition-all text-slate-600 dark:text-slate-400";
+            document.getElementById('period-year').className = "px-4 py-2 rounded-xl text-xs font-semibold transition-all text-slate-600 dark:text-slate-400";
+
+            document.getElementById(`period-${period}`).className = "px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-white dark:bg-slate-700 text-yoga-800 dark:text-white shadow-sm";
+            renderStats(period);
+        }
+
+        function renderStats(period = 'week') {
+            const sessions = getStoredSessions();
+            const now = new Date();
+
+            let filteredSessions = sessions.filter(s => {
+                const sDate = new Date(s.date);
+                if (period === 'week') {
+                    const diffDays = Math.abs(now - sDate) / (1000 * 60 * 60 * 24);
+                    return diffDays <= 7;
+                } else if (period === 'month') {
+                    return sDate.getMonth() === now.getMonth() && sDate.getFullYear() === now.getFullYear();
+                } else {
+                    return sDate.getFullYear() === now.getFullYear();
+                }
+            });
+
+            const totalSec = filteredSessions.reduce((acc, curr) => acc + (curr.durationSeconds || 0), 0);
+            const totalMin = Math.round(totalSec / 60);
+            document.getElementById('statTotalTime').innerText = `${totalMin} min`;
+            document.getElementById('statSessionsCount').innerText = filteredSessions.length;
+
+            const counts = {};
+            filteredSessions.forEach(s => {
+                counts[s.pranayamaName] = (counts[s.pranayamaName] || 0) + s.durationSeconds;
+            });
+            let fav = "Nenhum ainda";
+            let maxSec = 0;
+            for (let name in counts) {
+                if (counts[name] > maxSec) {
+                    maxSec = counts[name];
+                    fav = name;
+                }
+            }
+            document.getElementById('statFavorite').innerText = fav;
+
+            let labels = [];
+            let chartDataValues = [];
+
+            if (period === 'week') {
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    labels.push(d.toLocaleDateString('pt-BR', { weekday: 'short' }));
+
+                    const dayTotalSec = filteredSessions
+                        .filter(s => new Date(s.date).toDateString() === d.toDateString())
+                        .reduce((acc, curr) => acc + curr.durationSeconds, 0);
+                    chartDataValues.push(Math.round(dayTotalSec / 60));
+                }
+            } else if (period === 'month') {
+                labels = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'];
+                chartDataValues = [0, 0, 0, 0];
+                filteredSessions.forEach(s => {
+                    const d = new Date(s.date).getDate();
+                    const weekIdx = Math.min(3, Math.floor((d - 1) / 7));
+                    chartDataValues[weekIdx] += Math.round(s.durationSeconds / 60);
+                });
+            } else {
+                labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                chartDataValues = new Array(12).fill(0);
+                filteredSessions.forEach(s => {
+                    const mIdx = new Date(s.date).getMonth();
+                    chartDataValues[mIdx] += Math.round(s.durationSeconds / 60);
+                });
+            }
+
+            const canvas = document.getElementById('evolutionChart');
+            if (!canvas || typeof Chart === 'undefined') return;
+            const ctx = canvas.getContext('2d');
+            if (evolutionChartInstance) {
+                evolutionChartInstance.destroy();
+            }
+
+            const isDark = document.documentElement.classList.contains('dark');
+
+            evolutionChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Minutos Respirados',
+                        data: chartDataValues,
+                        backgroundColor: 'rgba(103, 132, 70, 0.85)',
+                        borderRadius: 8,
+                        hoverBackgroundColor: 'rgba(82, 106, 55, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { family: 'Inter', size: 11 } }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: isDark ? 'rgba(51, 65, 85, 0.3)' : 'rgba(226, 232, 240, 0.8)' },
+                            ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { family: 'Inter', size: 11 }, precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        /* EXPORTAR E IMPORTAR BACKUP (Garante que nunca se percam dados) */
+        function exportDataBackup() {
+            const data = getStoredSessions();
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `prana_sadhana_backup_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("Backup exportado com sucesso!");
+        }
+
+        function importDataBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(imported));
+                        renderStats(currentPeriod);
+                        showToast("Dados do Sadhana restaurados!");
+                    }
+                } catch (err) {
+                    alert("Arquivo de backup inválido.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            if (evolutionChartInstance) {
+                renderStats(currentPeriod);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            document.getElementById('toastMessage').innerText = msg;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+
+        function initApp() {
+            renderLibrary();
+            selectPranayama(2);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>
+```
